@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart
+playwright
+torch
+torchvision
+xgboost
+numpy
+Pillow
+opencv-python-headless
+groq
+python-dotenv
+aiofiles
