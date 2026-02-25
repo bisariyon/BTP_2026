@@ -21,11 +21,14 @@ RUN playwright install chromium --with-deps
 # Copy app source (gitignored files like models/ won't be here)
 COPY . .
 
-# Download model files at build time
-# Replace the URLs below with your actual Google Drive or HuggingFace URLs
+# Download model files at build time (direct Google Drive download links)
 RUN mkdir -p models && \
-    wget -q -O models/cnn_model.pth "https://drive.google.com/file/d/1kO2I1PgcScKPEl6aY5Y5h3XUoWQt0rIB/view?usp=drive_link" && \
-    wget -q -O models/xgb_dom.json  "https://drive.google.com/file/d/1U_-lrQzIshSGexePA2-foqFTQR3Cd_HQ/view?usp=drive_link"
+    wget --no-check-certificate -q \
+    "https://drive.usercontent.google.com/download?id=1kO2I1PgcScKPEl6aY5Y5h3XUoWQt0rIB&export=download&confirm=t" \
+    -O models/cnn_model.pth && \
+    wget --no-check-certificate -q \
+    "https://drive.usercontent.google.com/download?id=1U_-lrQzIshSGexePA2-foqFTQR3Cd_HQ&export=download&confirm=t" \
+    -O models/xgb_dom.json
 
 # Create runtime directories
 RUN mkdir -p app/static/screenshots data/captures reports
