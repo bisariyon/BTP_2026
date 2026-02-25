@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analysis Report — UXLens</title>
+    <meta name="description" content="ML-generated UX analysis report." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+
+<body class="result-page">
+
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="orb orb-1" aria-hidden="true"></div>
+    <div class="orb orb-2" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <a href="/" class="logo" id="nav-home">
+            <span class="logo-icon" aria-hidden="true">⬡</span>
+            <span class="logo-text">UX<span class="logo-accent">Lens</span></span>
+        </a>
+        <nav class="header-nav">
+            <a href="/" class="back-link" id="nav-analyze-another">← Analyze Another</a>
+            {% if not error %}
+            <a href="/report/{{ session_id }}" class="btn-download" id="btn-download-report" download>
+                ⬇ Download Report
+            </a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="result-main">
+
+        {% if error %}
+        <!-- ── Error State ──────────────────────────────────────────────── -->
+        <div class="error-card" role="alert">
+            <div class="error-icon" aria-hidden="true">⚠</div>
+            <h1 class="error-title">Analysis Failed</h1>
+            <p class="error-msg">{{ error }}</p>
+            <a href="/" class="btn-primary" id="btn-try-again">Try Again</a>
+        </div>
+
+        {% else %}
+        <!-- ── Success Result ──────────────────────────────────────────── -->
+
+        <!-- Page meta -->
+        <div class="result-meta">
+            <div class="result-url-row">
+                <span class="result-url-label">Analysed URL</span>
+                <a href="{{ url }}" target="_blank" rel="noopener" class="result-url-link" id="link-analysed-url">{{ url
+                    }}</a>
+            </div>
+            {% if page_title %}
+            <div class="result-page-title">{{ page_title }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Severity banner -->
+        <div class="severity-banner sev-{{ severity_class }}" id="severity-banner" role="status">
+            <div class="sev-icon" aria-hidden="true">
+                {% if severity_class == 'high' %}🔴{% elif severity_class == 'medium' %}🟡{% else %}🟢{% endif %}
+            </div>
+            <div class="sev-info">
+                <span class="sev-label-text">Severity Level</span>
+                <span class="sev-value">{{ severity_label }}</span>
+            </div>
+            <div class="sev-index">
+                <span class="sev-index-label">Index</span>
+                <span class="sev-index-val">{{ "%.3f"|format(metrics.severity | default(0)) }}</span>
+            </div>
+        </div>
+
+        <!-- Main grid -->
+        <div class="result-grid">
+
+            <!-- Screenshot -->
+            <section class="card screenshot-card" aria-label="Page Screenshot">
+                <h2 class="card-title">📸 Page Screenshot</h2>
+                {% if screenshot_url %}
+                <div class="screenshot-wrapper">
+                    <img id="page-screenshot" src="{{ screenshot_url }}" alt="Screenshot of {{ url }}"
+                        class="screenshot-img" loading="lazy" />
+                    <div class="screenshot-overlay">
+                        <a href="{{ screenshot_url }}" target="_blank" id="link-fullscreen-screenshot"
+                            class="view-full-btn">View Fullscreen ↗</a>
+                    </div>
+                </div>
+                {% else %}
+                <p class="no-screenshot">Screenshot unavailable.</p>
+                {% endif %}
+            </section>
+
+            <!-- Metrics -->
+            <section class="card metrics-card" aria-label="ML Metrics">
+                <h2 class="card-title">📊 ML Metrics</h2>
+
+                <div class="metric-item" id="metric-prob-issue">
+                    <div class="metric-head">
+                        <span class="metric-name">Issue Probability</span>
+                        <span
+                            class="metric-val {% if metrics.prob_issue > 0.6 %}val-danger{% elif metrics.prob_issue > 0.35 %}val-warn{% else %}val-ok{% endif %}">
+                            {{ "%.1f"|format(metrics.prob_issue * 100) }}%
+                        </span>
+                    </div>
+                    <div class="metric-bar-track">
+                        <div class="metric-bar-fill {% if metrics.prob_issue > 0.6 %}fill-danger{% elif metrics.prob_issue > 0.35 %}fill-warn{% else %}fill-ok{% endif %}"
+                            style="--pct: {{ (metrics.prob_issue * 100)|round|int }}%"></div>
+                    </div>
+                    <p class="metric-desc">CNN softmax confidence that the page has usability issues (higher = worse).
+                    </p>
+                </div>
+
+                <div class="metric-item" id="metric-usability-score">
+                    <div class="metric-head">
+                        <span class="metric-name">Usability Score</span>
+                        <span
+                            class="metric-val {% if metrics.usability_score > 0.6 %}val-ok{% elif metrics.usability_score > 0.3 %}val-warn{% else %}val-danger{% endif %}">
+                            {{ "%.4f"|format(metrics.usability_score) }}
+                        </span>
+                    </div>
+                    <div class="metric-bar-track">
+                        <div class="metric-bar-fill {% if metrics.usability_score > 0.6 %}fill-ok{% elif metrics.usability_score > 0.3 %}fill-warn{% else %}fill-danger{% endif %}"
+                            style="--pct: {{ [[(((metrics.usability_score | default(0)) * 100)|round|int), 100]|min, 0]|max }}%">
+                        </div>
+                    </div>
+                    <p class="metric-desc">XGBoost DOM-based usability prediction (higher = better).</p>
+                </div>
+
+                <div class="metric-item" id="metric-severity">
+                    <div class="metric-head">
+                        <span class="metric-name">Severity Index</span>
+                        <span class="metric-val sev-{{ severity_class }}">{{ "%.4f"|format(metrics.severity |
+                            default(0)) }}</span>
+                    </div>
+                    <p class="metric-desc">Fused severity score (issue probability × inverse usability). Higher = more
+                        urgent.</p>
+                </div>
+
+                <!-- DOM stats -->
+                {% if dom %}
+                <div class="dom-stats">
+                    <h3 class="dom-stats-title">DOM Snapshot</h3>
+                    <div class="dom-stat-grid">
+                        <div class="dom-stat"><span>Interactive Elements</span><strong>{{ dom.interactive_count
+                                }}</strong></div>
+                        <div class="dom-stat"><span>Images</span><strong>{{ dom.images_count }}</strong></div>
+                        <div class="dom-stat"><span>Images Missing Alt</span><strong
+                                class="{% if dom.imagesWithoutAlt > 0 %}stat-warn{% endif %}">{{ dom.imagesWithoutAlt
+                                }}</strong></div>
+                        <div class="dom-stat"><span>Links Without Text</span><strong
+                                class="{% if dom.accessibility.linksWithoutText > 0 %}stat-warn{% endif %}">{{
+                                dom.accessibility.linksWithoutText }}</strong></div>
+                        <div class="dom-stat"><span>Word Count</span><strong>{{ dom.textDensity.wordCount }}</strong>
+                        </div>
+                        <div class="dom-stat"><span>Total Elements</span><strong>{{ dom.layout.totalElements }}</strong>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </section>
+
+            <!-- Recommendations -->
+            <section class="card recs-card" aria-label="Recommendations">
+                <h2 class="card-title">🛠 Prioritised Recommendations</h2>
+
+                {% if recommendations %}
+                <ol class="recs-list" id="recs-list">
+                    {% for rec in recommendations %}
+                    <li class="rec-item priority-{{ rec.priority }}" id="rec-item-{{ loop.index }}">
+                        <div class="rec-header">
+                            <span class="rec-priority-badge p{{ rec.priority }}">
+                                {% if rec.priority == 1 %}🔴 Critical{% elif rec.priority == 2 %}🟡 Important{% else
+                                %}🟢 Minor{% endif %}
+                            </span>
+                            <span class="rec-type">{{ rec.issue_type }}</span>
+                        </div>
+                        <div class="rec-fix">
+                            <span class="rec-fix-label">Fix</span>
+                            <p>{{ rec.fix }}</p>
+                        </div>
+                        <div class="rec-explanation">
+                            <span class="rec-exp-label">Why it matters</span>
+                            <p>{{ rec.explanation }}</p>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ol>
+                {% else %}
+                <p class="no-recs">No recommendations generated.</p>
+                {% endif %}
+            </section>
+
+        </div><!-- /result-grid -->
+
+        <!-- Download CTA -->
+        <div class="download-cta">
+            <a href="/report/{{ session_id }}" class="btn-primary" id="btn-download-md" download>
+                ⬇ Download Full Markdown Report
+            </a>
+            <a href="/" class="btn-secondary" id="btn-new-analysis">Analyze Another Site</a>
+        </div>
+
+        {% endif %}
+    </main>
+
+    <footer class="site-footer">
+        <span>UXLens &copy; 2026 &mdash; BTP Research Project</span>
+    </footer>
+
+    <script>
+        // Animate metric bars after page load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.metric-bar-fill').forEach(bar => {
+                const pct = bar.style.getPropertyValue('--pct');
+                bar.style.width = '0%';
+                setTimeout(() => { bar.style.width = pct; }, 200);
+            });
+
+            // Stagger rec items
+            document.querySelectorAll('.rec-item').forEach((item, i) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 400 + i * 120);
+            });
+        });
+    </script>
+</body>
+
+</html>

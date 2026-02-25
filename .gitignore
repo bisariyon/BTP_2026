@@ -1,0 +1,71 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+pip-wheel-metadata/
+*.spec
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.env.local
+.env.*.local
+
+# ── Environment / Secrets ─────────────────────────────────────────────────────
+# KEEP: .env is gitignored — add secrets manually on the server
+.env
+
+# ── ML model weights (large binary files — store on Drive/HuggingFace Hub) ───
+models/cnn_model.pth
+models/xgb_dom.json
+models/xgb_dom_quick.json
+
+# ── Raw & captured training data (1800+ files, not needed for deployment) ────
+data/raw/
+data/captures/
+data/labelled/
+
+# ── Auto-generated app runtime data ──────────────────────────────────────────
+app/static/screenshots/
+reports/
+
+# ── Temp / test files ────────────────────────────────────────────────────────
+test_groq.py
+result_groq_test.html
+result_groq_test2.html
+result_test2.html
+*.html.bak
+
+# ── Jupyter Notebooks checkpoints ────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── IDE / Editor ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+desktop.ini
+ehthumbs.db

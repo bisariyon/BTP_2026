@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UX Lens — ML-Powered Website Usability Auditor</title>
+  <meta name="description" content="Paste any URL and get an instant AI-powered UX and accessibility audit powered by CNN, XGBoost and Gemini." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body class="home-page">
+
+  <!-- Animated background grid -->
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <!-- Floating orbs -->
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="logo">
+      <span class="logo-icon" aria-hidden="true">⬡</span>
+      <span class="logo-text">UX<span class="logo-accent">Lens</span></span>
+    </div>
+    <nav class="header-nav">
+      <span class="nav-badge">BTP 2026</span>
+    </nav>
+  </header>
+
+  <main class="hero-section">
+    <div class="hero-content">
+
+      <!-- Badge -->
+      <div class="hero-badge">
+        <span class="badge-dot" aria-hidden="true"></span>
+        ML · CNN + XGBoost · Gemini 2.0 Flash
+      </div>
+
+      <!-- Headline -->
+      <h1 class="hero-title">
+        Instant AI Usability<br />
+        <span class="gradient-text">Audit for Any Website</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Enter any URL below. Our system captures the page, runs deep learning inference,
+        and generates a prioritised UX report—fully automated in under 15 seconds.
+      </p>
+
+      <!-- URL Form -->
+      <form id="analyze-form" action="/analyze" method="POST" class="url-form">
+        <div class="input-wrapper">
+          <span class="input-icon" aria-hidden="true">🌐</span>
+          <input
+            id="url-input"
+            type="text"
+            name="url"
+            class="url-input"
+            placeholder="https://example.com"
+            autocomplete="url"
+            spellcheck="false"
+            required
+          />
+          <button id="analyze-btn" type="submit" class="analyze-btn">
+            <span class="btn-text">Analyze</span>
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <!-- Loading overlay (shown during submit) -->
+        <div id="loading-overlay" class="loading-overlay hidden" aria-live="polite">
+          <div class="loading-spinner" aria-hidden="true"></div>
+          <div class="loading-steps">
+            <p id="loading-msg" class="loading-msg">Launching browser…</p>
+            <div class="loading-progress">
+              <div id="loading-bar" class="loading-bar"></div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Feature pills -->
+      <div class="feature-pills">
+        <span class="pill">📸 Full-Page Capture</span>
+        <span class="pill">🧠 CNN Screenshot Analysis</span>
+        <span class="pill">🌳 DOM XGBoost Scoring</span>
+        <span class="pill">✨ Gemini Recommendations</span>
+        <span class="pill">📄 Markdown Report</span>
+      </div>
+
+    </div>
+
+    <!-- Decorative card preview -->
+    <div class="hero-demo-card" aria-hidden="true">
+      <div class="demo-card-header">
+        <span class="demo-dot r"></span><span class="demo-dot y"></span><span class="demo-dot g"></span>
+        <span class="demo-url">https://example.com</span>
+      </div>
+      <div class="demo-metrics">
+        <div class="demo-metric">
+          <span class="dm-label">Issue Probability</span>
+          <span class="dm-value warn">72%</span>
+        </div>
+        <div class="demo-metric">
+          <span class="dm-label">Usability Score</span>
+          <span class="dm-value ok">0.58</span>
+        </div>
+        <div class="demo-metric">
+          <span class="dm-label">Severity Index</span>
+          <span class="dm-value danger">HIGH</span>
+        </div>
+      </div>
+      <div class="demo-recs">
+        <div class="demo-rec">
+          <span class="rec-badge c1">1</span>
+          <span class="rec-text">Add alt text to all images</span>
+        </div>
+        <div class="demo-rec">
+          <span class="rec-badge c2">2</span>
+          <span class="rec-text">Improve colour contrast ratio</span>
+        </div>
+        <div class="demo-rec">
+          <span class="rec-badge c3">3</span>
+          <span class="rec-text">Reduce CLS by fixing ad slots</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Pipeline section -->
+  <section class="pipeline-section" aria-label="How it works">
+    <div class="pipeline-title">How It Works</div>
+    <div class="pipeline-steps">
+      <div class="step">
+        <div class="step-icon">🌐</div>
+        <div class="step-num">01</div>
+        <div class="step-label">URL Input</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-icon">📸</div>
+        <div class="step-num">02</div>
+        <div class="step-label">Playwright Capture</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-icon">🧠</div>
+        <div class="step-num">03</div>
+        <div class="step-label">CNN + XGBoost</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-icon">✨</div>
+        <div class="step-num">04</div>
+        <div class="step-label">Gemini LLM</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-icon">📄</div>
+        <div class="step-num">05</div>
+        <div class="step-label">UX Report</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <span>UXLens &copy; 2026 &mdash; BTP Research Project</span>
+  </footer>
+
+  <script>
+    const form = document.getElementById('analyze-form');
+    const overlay = document.getElementById('loading-overlay');
+    const msg = document.getElementById('loading-msg');
+    const bar = document.getElementById('loading-bar');
+
+    const steps = [
+      [0,   'Launching browser…'],
+      [15,  'Navigating to page…'],
+      [30,  'Capturing screenshot…'],
+      [45,  'Extracting DOM…'],
+      [60,  'Running CNN inference…'],
+      [72,  'Running XGBoost…'],
+      [82,  'Calling Gemini AI…'],
+      [94,  'Assembling report…'],
+    ];
+
+    form.addEventListener('submit', function(e) {
+      const urlVal = document.getElementById('url-input').value.trim();
+      if (!urlVal) return;
+      overlay.classList.remove('hidden');
+      let idx = 0;
+      function tick() {
+        if (idx < steps.length) {
+          bar.style.width = steps[idx][0] + '%';
+          msg.textContent = steps[idx][1];
+          idx++;
+          setTimeout(tick, 1800);
+        }
+      }
+      tick();
+    });
+  </script>
+</body>
+</html>
