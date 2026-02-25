@@ -30,8 +30,8 @@ DOM_DIR.mkdir(parents=True, exist_ok=True)
 
 MAX_FULLPAGE_HEIGHT = 12_000  # px
 
-# ─── Thread pool (1 worker keeps Playwright happy; increase if needed) ───────
-_executor = ThreadPoolExecutor(max_workers=2)
+# ─── Thread pool (Reduce to 1 for low-RAM stability) ────────────────────────
+_executor = ThreadPoolExecutor(max_workers=1)
 
 
 # ─── Internal sync helpers ───────────────────────────────────────────────────
@@ -217,7 +217,16 @@ def _do_capture(url: str, img_path: str, dom_path: str) -> dict:
     import time
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        # Added memory-saving flags for Render/Docker environments
+        browser = p.chromium.launch(
+            headless=True,
+            args=[
+                "--disable-dev-shm-usage",
+                "--no-sandbox",
+                "--disable-gpu",
+                "--disable-setuid-sandbox",
+            ],
+        )
         context = browser.new_context(
             viewport={"width": 1366, "height": 900},
             device_scale_factor=1,
